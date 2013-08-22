@@ -24,6 +24,6 @@ This is not a design requirement, it is mostly to prevent common errors when you
 from another project without without changing its name.
 
 ## Author
- * [Sébastien Lavoie](http://blog.lavoie.sl)
+ * [Sébastien Lavoie](http://blog.lavoie.sl/2013/08/composer-repository-for-gitlab-projects.html)
  * [WeMakeCustom](http://www.wemakecustom.com)
 
