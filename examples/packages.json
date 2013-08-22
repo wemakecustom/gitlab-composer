@@ -1,0 +1,26 @@
+{
+    "packages": {
+        "my-group/my-project": {
+            "dev-master": {
+                "name": "my-group/my-project",
+                "source": {
+                    "reference": "882816c7c05b5b5704e84bdb0f7ad69230df3c0c",
+                    "type": "git",
+                    "url": "git@gitlab.example.com:my-group/my-project.git"
+                },
+                "type": "project",
+                "version": "dev-master"
+            },
+            "v1.5": {
+                "name": "my-group/my-project",
+                "source": {
+                    "reference": "882816c7c05b5b5704e84bdb0f7ad69230df3c0c",
+                    "type": "git",
+                    "url": "git@gitlab.example.com:my-group/my-project.git"
+                },
+                "type": "project",
+                "version": "v1.5"
+            }
+        }
+    }
+}
