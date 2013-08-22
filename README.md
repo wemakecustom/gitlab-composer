@@ -24,6 +24,11 @@ Only requirement is that the package `name` must be equal to the path of the pro
 This is not a design requirement, it is mostly to prevent common errors when you copy a `composer.json`
 from another project without without changing its name.
 
+## Caveats
+
+While your projects will be protected through SSH, they will be publicly listed.
+If you require protection of the package list, [I suggest this reading](https://github.com/composer/composer/blob/master/doc/articles/handling-private-packages-with-satis.md).
+
 ## Author
  * [Sébastien Lavoie](http://blog.lavoie.sl/2013/08/composer-repository-for-gitlab-projects.html)
  * [WeMakeCustom](http://www.wemakecustom.com)
