@@ -9,10 +9,11 @@ See [example](examples/packages.json).
 
 ## Installation
 
- 1. Copy `confs/samples/gitlab.ini` into `confs/gitlab.ini`, following instructions in comments
- 2. Ensure cache is writable
- 3. Change the TTL as desired (default is 60 seconds)
- 4. Ensure an alias exists for /packages.json => /packages.php (.htaccess is provided)
+ 1. Run `composer.phar install`
+ 2. Copy `confs/samples/gitlab.ini` into `confs/gitlab.ini`, following instructions in comments
+ 3. Ensure cache is writable
+ 4. Change the TTL as desired (default is 60 seconds)
+ 5. Ensure an alias exists for /packages.json => /packages.php (.htaccess is provided)
 
 ## Usage
 
