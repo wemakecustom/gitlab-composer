@@ -9,10 +9,11 @@ See [example](examples/packages.json).
 
 ## Installation
 
- 1. Copy `confs/samples/gitlab.ini` into `confs/gitlab.ini`, following instructions in comments
- 2. Ensure cache is writable
- 3. Change the TTL as desired (default is 60 seconds)
- 4. Ensure an alias exists for /packages.json => /packages.php (.htaccess is provided)
+ 1. Run `composer.phar install`
+ 2. Copy `confs/samples/gitlab.ini` into `confs/gitlab.ini`, following instructions in comments
+ 3. Ensure cache is writable
+ 4. Change the TTL as desired (default is 60 seconds)
+ 5. Ensure an alias exists for /packages.json => /packages.php (.htaccess is provided)
 
 ## Usage
 
@@ -22,6 +23,11 @@ the [formats for versions](http://getcomposer.org/doc/04-schema.md#version) will
 Only requirement is that the package `name` must be equal to the path of the project. i.e.: `my-group/my-project`.
 This is not a design requirement, it is mostly to prevent common errors when you copy a `composer.json`
 from another project without without changing its name.
+
+## Caveats
+
+While your projects will be protected through SSH, they will be publicly listed.
+If you require protection of the package list, [I suggest this reading](https://github.com/composer/composer/blob/master/doc/articles/handling-private-packages-with-satis.md).
 
 ## Author
  * [Sébastien Lavoie](http://blog.lavoie.sl/2013/08/composer-repository-for-gitlab-projects.html)
