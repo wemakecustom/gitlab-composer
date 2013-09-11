@@ -81,7 +81,7 @@ $fetch_composer = function($project, $ref) use ($repos) {
 $fetch_ref = function($project, $ref) use ($fetch_composer) {
     if ($ref['name'] == 'master') {
         $version = 'dev-master';
-    } elseif (preg_match('/^v?\d+\.\d+(\.\d+)?(\-(dev|patch|alpha|beta|RC)\d*)?$/', $ref['name'])) {
+    } elseif (preg_match('/^v?\d+\.\d+(\.\d+)*(\-(dev|patch|alpha|beta|RC)\d*)?$/', $ref['name'])) {
         $version = $ref['name'];
     } else {
         return array();
