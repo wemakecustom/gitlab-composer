@@ -59,13 +59,7 @@ $fetch_composer = function($project, $ref) use ($repos) {
             return false; // packages must have a name and must match
         }
 
-        $data['name'] = $composer['name'];
-
-        if (isset($composer['type'])) {
-            $data['type'] = $composer['type'];
-        }
-
-        return $data;
+        return $composer;
     } catch (RuntimeException $e) {
         return false;
     }
