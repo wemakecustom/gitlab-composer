@@ -53,7 +53,8 @@ $repos = $client->api('repositories');
 $fetch_composer = function($project, $ref) use ($repos) {
     try {
         $data = array();
-        $composer = $repos->blob($project['id'], $ref, 'composer.json');
+        $c = $repos->blob($project['id'], $ref, 'composer.json');
+        $composer = json_decode($c, true);
 
         if (empty($composer['name']) || $composer['name'] != $project['path_with_namespace']) {
             return false; // packages must have a name and must match
