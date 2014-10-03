@@ -103,6 +103,10 @@ $fetch_ref = function($project, $ref) use ($fetch_composer) {
  */
 $fetch_refs = function($project) use ($fetch_ref, $repos) {
     $datas = array();
+    
+    if (property_exists($repos,"branches") == false || property_exists($repos,"tags")==false)
+        return $datas;
+
 
     foreach (array_merge($repos->branches($project['id']), $repos->tags($project['id'])) as $ref) {
         foreach ($fetch_ref($project, $ref) as $version => $data) {
