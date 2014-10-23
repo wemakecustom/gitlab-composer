@@ -172,7 +172,7 @@ foreach($all_projects as $project){
 	$project_ids[] = $project['id'];
 }
 
-foreach ($projects->accessible(1, 1000) as $project) {
+foreach ($projects->owned(1, 1000) as $project) {
 	if(!in_array($project['id'], $project_ids)) {
         $all_projects[] = $project;
 	}
