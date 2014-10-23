@@ -163,6 +163,21 @@ foreach ($groups->all(1, 1000) as $group) {
     }
 }
 
+/**
+ * Get a the list of accessible projects to find personal projects and inlcude 
+ * them if not yet included
+ */
+$project_ids = array();
+foreach($all_projects as $project){
+	$project_ids[] = $project['id'];
+}
+
+foreach ($projects->owned(1, 1000) as $project) {
+	if(!in_array($project['id'], $project_ids)) {
+        $all_projects[] = $project;
+	}
+}
+
 $packages = array();
 foreach ($all_projects as $project) {
     if ($package = $load_data($project)) {
