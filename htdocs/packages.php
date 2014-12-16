@@ -6,27 +6,24 @@ use Gitlab\Client;
 use Gitlab\Exception\RuntimeException;
 
 $packages_file = __DIR__ . '/../cache/packages.json';
-$ttl = 0; // seconds
 
 /**
  * Output a json file, sending max-age header, then dies
  */
-$outputFile = function ($file) use ($ttl) {
+$outputFile = function ($file) {
     $mtime = filemtime($file);
 
-    if (time() <= $mtime + $ttl) {
-        header('Content-Type: application/json');
-        header('Cache-Control: max-age=' . $ttl);
-        header('Last-Modified: ' . gmdate('r', $mtime));
-        readfile($file);
-        die();
-    }
-};
+    header('Content-Type: application/json');
+    header('Last-Modified: ' . gmdate('r', $mtime));
+    header('Cache-Control: max-age=0');
 
-// Full page cache
-if (file_exists($packages_file)) {
-    $outputFile($packages_file);
-}
+    if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) && ($since = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])) && $since >= $mtime) {
+        header('HTTP/1.0 304 Not Modified');
+    } else {
+        readfile($file);
+    }
+    die();
+};
 
 // See ../confs/samples/gitlab.ini
 $config_file = __DIR__ . '/../confs/gitlab.ini';
@@ -148,23 +145,27 @@ $load_data = function($project) use ($fetch_refs) {
 };
 
 $all_projects = array();
+$mtime = 0;
 
 for ($page = 1; count($p = $projects->all($page, 100)); $page++) {
     foreach ($p as $project) {
         $all_projects[] = $project;
+        $mtime = max($mtime, strtotime($project['last_activity_at']));
     }
 }
 
-$packages = array();
-foreach ($all_projects as $project) {
-    if ($package = $load_data($project)) {
-        $packages[$project['path_with_namespace']] = $package;
+if (!file_exists($packages_file) || filemtime($packages_file) < $mtime) {
+    $packages = array();
+    foreach ($all_projects as $project) {
+        if ($package = $load_data($project)) {
+            $packages[$project['path_with_namespace']] = $package;
+        }
     }
-}
-$data = json_encode(array(
-    'packages' => array_filter($packages),
-));
+    $data = json_encode(array(
+        'packages' => array_filter($packages),
+    ));
 
-file_put_contents($packages_file, $data);
+    file_put_contents($packages_file, $data);
+}
 
 $outputFile($packages_file);
