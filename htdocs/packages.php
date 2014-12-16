@@ -40,7 +40,6 @@ $client = new Client($confs['endpoint']);
 $client->authenticate($confs['api_key'], Client::AUTH_URL_TOKEN);
 
 $projects = $client->api('projects');
-$groups = $client->api('groups');
 $repos = $client->api('repositories');
 
 /**
@@ -150,15 +149,8 @@ $load_data = function($project) use ($fetch_refs) {
 
 $all_projects = array();
 
-/**
- * Load all groups (max 1000, on 1 page), then load all projects for this group
- * It is not possible to directly load all projects
- * @link https://github.com/gitlabhq/gitlabhq/issues/3839
- */
-foreach ($groups->all(1, 1000) as $group) {
-    $g = $groups->show($group['id']);
-
-    foreach ($g['projects'] as $project) {
+for ($page = 1; count($p = $projects->all($page, 100)); $page++) {
+    foreach ($p as $project) {
         $all_projects[] = $project;
     }
 }
