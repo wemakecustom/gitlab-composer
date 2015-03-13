@@ -145,7 +145,14 @@ $load_data = function($project) use ($fetch_refs) {
 $all_projects = array();
 $mtime = 0;
 
-for ($page = 1; count($p = $projects->all($page, 100)); $page++) {
+$me = $client->api('users')->me();
+if ((bool)$me['is_admin']) {
+	$projects_api_method = 'all';
+} else {
+	$projects_api_method = 'accessible';
+}
+
+for ($page = 1; count($p = $projects->$projects_api_method($page, 100)); $page++) {
     foreach ($p as $project) {
         $all_projects[] = $project;
         $mtime = max($mtime, strtotime($project['last_activity_at']));
