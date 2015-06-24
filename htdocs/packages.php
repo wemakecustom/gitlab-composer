@@ -52,7 +52,7 @@ $fetch_composer = function($project, $ref) use ($repos) {
         $c = $repos->blob($project['id'], $ref, 'composer.json');
         $composer = is_array($c) ? $c : json_decode($c, true);
 
-        if (empty($composer['name']) || $composer['name'] != $project['path_with_namespace']) {
+        if (empty($composer['name']) || strcasecmp($composer['name'], $project['path_with_namespace']) !== 0) {
             return false; // packages must have a name and must match
         }
 
