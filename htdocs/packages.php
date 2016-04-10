@@ -83,6 +83,10 @@ $fetch_ref = function($project, $ref) use ($fetch_composer) {
             'type'      => 'git',
             'reference' => $ref['commit']['id'],
         );
+        $data['dist'] = array(
+            'url'  => $project['web_url'] . '/repository/archive.tar.gz?ref=' . $ref['commit']['id'],
+            'type' => 'tar',
+        );
 
         return array($version => $data);
     } else {
