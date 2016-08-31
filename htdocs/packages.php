@@ -170,6 +170,16 @@ if (!file_exists($packages_file) || filemtime($packages_file) < $mtime) {
     if ( file_exists( $static_file ) ) {
         $static_packages = json_decode( file_get_contents( $static_file ) );
         foreach ( $static_packages as $name => $package ) {
+            foreach ( $package as $version => $root ) {
+                if ( isset( $root->extra ) ) {
+                    $root->extra->_source = 'static';
+                }
+                else {
+                    $root->extra = array(
+                        '_source' => 'static',
+                    );
+                }
+            }
             $packages[$name] = $package;
         }
     }

@@ -20,9 +20,6 @@
 			,"include-path": [
 				"lib/"
 			]
-			,"extra": {
-				"_source": "static"
-			}
 		}
 	}
 }
