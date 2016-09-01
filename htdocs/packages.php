@@ -172,7 +172,9 @@ if (!file_exists($packages_file) || filemtime($packages_file) < $mtime) {
         foreach ( $static_packages as $name => $package ) {
             foreach ( $package as $version => $root ) {
                 if ( isset( $root->extra ) ) {
-                    $root->extra->_source = 'static';
+                    if ( !isset( $root->extra->_source ) ) {
+                        $root->extra->_source = 'static';
+                    }
                 }
                 else {
                     $root->extra = array(
