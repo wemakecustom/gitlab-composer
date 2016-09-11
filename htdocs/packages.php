@@ -6,6 +6,7 @@ use Gitlab\Client;
 use Gitlab\Exception\RuntimeException;
 
 $packages_file = __DIR__ . '/../cache/packages.json';
+$static_file = __DIR__ . '/../confs/static-repos.json';
 
 /**
  * Output a json file, sending max-age header, then dies
@@ -175,6 +176,26 @@ if (!file_exists($packages_file) || filemtime($packages_file) < $mtime) {
     foreach ($all_projects as $project) {
         if ($package = $load_data($project)) {
             $packages[$project['path_with_namespace']] = $package;
+        }
+    }
+    if ( file_exists( $static_file ) ) {
+        $static_packages = json_decode( file_get_contents( $static_file ) );
+        foreach ( $static_packages as $name => $package ) {
+            foreach ( $package as $version => $root ) {
+                if ( isset( $root->extra ) ) {
+                    $source = '_source';
+                    while ( isset( $root->extra->{$source} ) ) {
+                        $source = '_' . $source;
+                    }
+                    $root->extra->{$source} = 'static';
+                }
+                else {
+                    $root->extra = array(
+                        '_source' => 'static',
+                    );
+                }
+            }
+            $packages[$name] = $package;
         }
     }
     $data = json_encode(array(
