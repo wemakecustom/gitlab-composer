@@ -56,9 +56,13 @@ if (isset($confs['method']) && in_array($confs['method'], $validMethods)) {
  */
 $fetch_composer = function($project, $ref) use ($repos) {
     try {
-        $data = array();
-        $c = $repos->blob($project['id'], $ref, 'composer.json');
-        $composer = is_array($c) ? $c : json_decode($c, true);
+        $c = $repos->getFile($project['id'], 'composer.json', $ref);
+
+        if(!isset($c['content'])) {
+            return false;
+        }
+
+        $composer = json_decode(base64_decode($c['content']), true);
 
         if (empty($composer['name']) || strcasecmp($composer['name'], $project['path_with_namespace']) !== 0) {
             return false; // packages must have a name and must match
