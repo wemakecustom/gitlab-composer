@@ -162,7 +162,8 @@ $all_projects = array();
 $mtime = 0;
 
 $me = $client->api('users')->me();
-if ((bool)$me['is_admin']) {
+// User is admin
+if ((bool)$me['can_create_group']) {
 	$projects_api_method = 'all';
 } else {
 	$projects_api_method = 'accessible';
