@@ -37,6 +37,7 @@ $confs = parse_ini_file($config_file);
 $client = new Client($confs['endpoint']);
 $client->authenticate($confs['api_key'], Client::AUTH_URL_TOKEN);
 
+$groups = $client->api('groups');
 $projects = $client->api('projects');
 $repos = $client->api('repositories');
 
@@ -158,23 +159,39 @@ $load_data = function($project) use ($fetch_refs) {
     }
 };
 
+// Load projects
 $all_projects = array();
 $mtime = 0;
-
-$me = $client->api('users')->me();
-if ((bool)$me['is_admin']) {
-	$projects_api_method = 'all';
+if (!empty($confs['groups'])) {
+    // We have to get projects from specifics groups
+    foreach ($groups->all(1, 100) as $group) {
+        if (!in_array($group['name'], $confs['groups'], true)) {
+            continue;
+        }
+        for ($page = 1; count($p = $groups->projects($group['id'], $page, 100)); $page++) {
+            foreach ($p as $project) {
+                $all_projects[] = $project;
+                $mtime = max($mtime, strtotime($project['last_activity_at']));
+            }
+        }
+    }
 } else {
-	$projects_api_method = 'accessible';
-}
-
-for ($page = 1; count($p = $projects->$projects_api_method($page, 100)); $page++) {
-    foreach ($p as $project) {
-        $all_projects[] = $project;
-        $mtime = max($mtime, strtotime($project['last_activity_at']));
+    // We have to get all accessible projects
+    $me = $client->api('users')->me();
+    if ((bool)$me['is_admin']) {
+        $projects_api_method = 'all';
+    } else {
+        $projects_api_method = 'accessible';
+    }
+    for ($page = 1; count($p = $projects->$projects_api_method($page, 100)); $page++) {
+        foreach ($p as $project) {
+            $all_projects[] = $project;
+            $mtime = max($mtime, strtotime($project['last_activity_at']));
+        }
     }
 }
 
+// Regenerate packages_file is needed
 if (!file_exists($packages_file) || filemtime($packages_file) < $mtime) {
     $packages = array();
     foreach ($all_projects as $project) {
