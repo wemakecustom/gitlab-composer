@@ -34,7 +34,7 @@ if (!file_exists($config_file)) {
 }
 $confs = parse_ini_file($config_file);
 
-$client = new Client($confs['endpoint']);
+$client = Client::create($confs['endpoint']);
 $client->authenticate($confs['api_key'], Client::AUTH_URL_TOKEN);
 
 $groups = $client->api('groups');
@@ -164,11 +164,11 @@ $all_projects = array();
 $mtime = 0;
 if (!empty($confs['groups'])) {
     // We have to get projects from specifics groups
-    foreach ($groups->all(1, 100) as $group) {
+    foreach ($groups->all(array('page' => 1, 'per_page' => 100)) as $group) {
         if (!in_array($group['name'], $confs['groups'], true)) {
             continue;
         }
-        for ($page = 1; count($p = $groups->projects($group['id'], $page, 100)); $page++) {
+        for ($page = 1; count($p = $groups->projects($group['id'], array('page' => $page, 'per_page' => 100))); $page++) {
             foreach ($p as $project) {
                 $all_projects[] = $project;
                 $mtime = max($mtime, strtotime($project['last_activity_at']));
@@ -178,12 +178,7 @@ if (!empty($confs['groups'])) {
 } else {
     // We have to get all accessible projects
     $me = $client->api('users')->me();
-    if ((bool)$me['is_admin']) {
-        $projects_api_method = 'all';
-    } else {
-        $projects_api_method = 'accessible';
-    }
-    for ($page = 1; count($p = $projects->$projects_api_method($page, 100)); $page++) {
+    for ($page = 1; count($p = $projects->all(array('page' => $page, 'per_page' => 100))); $page++) {
         foreach ($p as $project) {
             $all_projects[] = $project;
             $mtime = max($mtime, strtotime($project['last_activity_at']));
