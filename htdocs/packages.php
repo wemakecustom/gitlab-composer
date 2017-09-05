@@ -48,6 +48,13 @@ if (isset($confs['method']) && in_array($confs['method'], $validMethods)) {
     define('method', 'ssh');
 }
 
+$file_is_outdated = function($file_path, $mtime) {
+    // Subtract 2 minutes from file modified date due to issue with updating "last_activity_at".
+    // @see: https://gitlab.com/gitlab-org/gitlab-ce/issues/22213
+    $delta = 120;
+    return (filemtime($file_path) - $delta) < $mtime;
+};
+
 /**
  * Retrieves some information about a project's composer.json
  *
@@ -131,7 +138,7 @@ $fetch_refs = function($project) use ($fetch_ref, $repos) {
  * @param array $project
  * @return array Same as $fetch_refs
  */
-$load_data = function($project) use ($fetch_refs) {
+$load_data = function($project) use ($fetch_refs, $file_is_outdated) {
     $file    = __DIR__ . "/../cache/{$project['path_with_namespace']}.json";
     $mtime   = strtotime($project['last_activity_at']);
 
@@ -139,7 +146,7 @@ $load_data = function($project) use ($fetch_refs) {
         mkdir(dirname($file), 0777, true);
     }
 
-    if (file_exists($file) && filemtime($file) >= $mtime) {
+    if (file_exists($file) && !$file_is_outdated($file, $mtime)) {
         if (filesize($file) > 0) {
             return json_decode(file_get_contents($file));
         } else {
@@ -187,7 +194,7 @@ if (!empty($confs['groups'])) {
 }
 
 // Regenerate packages_file is needed
-if (!file_exists($packages_file) || filemtime($packages_file) < $mtime) {
+if (!file_exists($packages_file) || $file_is_outdated($packages_file, $mtime)) {
     $packages = array();
     foreach ($all_projects as $project) {
         if ($package = $load_data($project)) {
