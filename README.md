@@ -20,9 +20,10 @@ See [example](examples/packages.json).
 Simply include a composer.json in your project, all branches and tags respecting 
 the [formats for versions](http://getcomposer.org/doc/04-schema.md#version) will be detected.
 
-Only requirement is that the package `name` must be equal to the path of the project. i.e.: `my-group/my-project`.
+By default, the package `name` must be equal to the path of the project. i.e.: `my-group/my-project`.
 This is not a design requirement, it is mostly to prevent common errors when you copy a `composer.json`
-from another project without changing its name.
+from another project without changing its name. To enable support for differences between package names and project
+paths, set `allow_package_name_mismatch` to `true` in `confs/gitlab.ini`.
 
 Then, to use your repository, add this in the `composer.json` of your project:
 ```json
