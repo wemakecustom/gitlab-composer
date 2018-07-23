@@ -1,6 +1,3 @@
-Satisfy any
-Allow from all
-
 RewriteEngine On
 RewriteBase /
 RewriteRule ^$ packages.json [R=302,L]
