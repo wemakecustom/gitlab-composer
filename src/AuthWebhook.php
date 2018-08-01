@@ -30,7 +30,7 @@ class AuthWebhook extends Auth
             http_response_code(500);
             exit("webhook_token is not configured in gitlab.ini, please add it to the composer-gitlab config file");
         }
-        if (!$_SERVER['HTTP_X-Gitlab-Token'] == $this->confs['webhook_token']){
+        if (!$_SERVER['HTTP_X_GITLAB_TOKEN'] == $this->confs['webhook_token']){
             http_response_code(403);
             exit("X-Gitlab-Token is not allowed to access");
         }
